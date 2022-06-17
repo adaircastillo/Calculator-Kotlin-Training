@@ -11,6 +11,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var binding: ActivityMainBinding
 
+    private val processor = Processor(0,0)
+
+    private var number: String = ""
+        set(value) {
+            binding.display.text = value
+            field = value
+        }
+
+    private var operation: String = ""
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -22,9 +33,22 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         with(binding){
 
-            keyClear.setOnClickListener {
+            keyClear.setOnClickListener { view ->
+                number = ""
+            }
 
-                Log.e("TEST", "Click en boton Clear")
+            keyPlus.setOnClickListener {
+                if(it is Button){
+                    processor.firstOperand = number.toInt()
+                    operation = it.text.toString()
+                    number = ""
+                }
+            }
+
+            keyEquals.setOnClickListener {
+                processor.secondOperand = number.toInt()
+                val result = processor.performOperation(operation)
+                display.text = result.toString()
             }
 
             key0.setOnClickListener(this@MainActivity)
@@ -40,17 +64,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    override fun onClick(v: View?) {
-
-        if(v is Button){
-
-            val number = v.text.toString()
-
-            Log.e("TEST", "Click en boton $number")
-
+    override fun onClick(button: View?) {
+        if(button is Button){
+            this.number += button.text.toString()
         }
-
-
     }
 }
 
